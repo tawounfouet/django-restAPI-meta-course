@@ -60,26 +60,39 @@ def books(request):
 # Using class based views
 from rest_framework.views import APIView
 
-class BookList(APIView):
-    def get(self, request):
-        author = request.GET.get('author')
-        if (author):
-            return Response({"message":"list of the books by " + author}, status=status.HTTP_200_OK)
+# class BookList(APIView):
+#     def get(self, request):
+#         author = request.GET.get('author')
+#         if (author):
+#             return Response({"message":"list of the books by " + author}, status=status.HTTP_200_OK)
         
-        return Response({"message":"List of the books"}, status=status.HTTP_200_OK)
+#         return Response({"message":"List of the books"}, status=status.HTTP_200_OK)
     
-    def post(self, request):
-        #title = request.data.get('title')
-        #return Response({"message":"new book created"}, status=status.HTTP_201_CREATED)
+#     def post(self, request):
+#         #title = request.data.get('title')
+#         #return Response({"message":"new book created"}, status=status.HTTP_201_CREATED)
 
-        # Using payload : a payload is a body of data sent through POST method
-        return Response({"title":request.data.get('title')}, status=status.HTTP_201_CREATED)
-        #return Response({"title":title}, status=status.HTTP_201_CREATED)
+#         # Using payload : a payload is a body of data sent through POST method
+#         return Response({"title":request.data.get('title')}, status=status.HTTP_201_CREATED)
+#         #return Response({"title":title}, status=status.HTTP_201_CREATED)
 
 
-class Book(APIView):
-    def get(self, request, pk):
-        return Response({"message":"Single book with id " + str(pk)}, status=status.HTTP_200_OK)
+# class Book(APIView):
+#     def get(self, request, pk):
+#         return Response({"message":"Single book with id " + str(pk)}, status=status.HTTP_200_OK)
     
-    def put(self, request, pk):
-        return Response({"title":request.data.get('title')}, status=status.HTTP_200_OK)
+#     def put(self, request, pk):
+#         return Response({"title":request.data.get('title')}, status=status.HTTP_200_OK)
+
+
+
+from rest_framework import generics
+from .serializers import BookSerializer
+
+class BookView(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+class SingleBookView(generics.RetrieveUpdateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer

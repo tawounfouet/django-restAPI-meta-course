@@ -29,7 +29,34 @@ django-admin startproject BookList .
 
 # Create a new app
 python manage.py startapp BookListAPI
+
+# Adding the django debug toolbar to the project
+pipenv install django-debug-toolbar
+
+# Add the app to the INSTALLED_APPS list in settings.py
+INSTALLED_APPS = [
+    ...
+    'django.contrib.staticfiles',
+    'debug_toolbar',
+    'BookListAPI',
+]
+
+# Add the following to the end of the settings.py file
+# This will allow us to use the debug toolbar when we are in debug mode
+if DEBUG:
+    import debug_toolbar
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]
+    DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_TOOLBAR_CALLBACK': lambda request: True
+    }
 ```
+
+
 
 ## Create a simple endpoint
 
@@ -60,3 +87,10 @@ def books(request):
     return Response('List of books', books, status=status.HTTP_200_OK)
 
 ```
+
+
+## Restaurant menu API project with DRF
+
+```bash
+# Create a new App called LittleLemonAPI
+python manage.py startapp LittleLemonAPI
