@@ -94,3 +94,30 @@ def books(request):
 ```bash
 # Create a new App called LittleLemonAPI
 python manage.py startapp LittleLemonAPI
+
+```
+
+```bash
+# Renderers
+
+# JSONRenderer
+rest_framework.renderers.JSONRenderer
+
+# BrowsableAPIRenderer
+rest_framework.renderers.BrowsableAPIRenderer
+
+
+# XMLRenderer
+pipenv djangorestframework-xml # installation 
+rest_framework_xml.renderers.XMLRenderer
+
+
+# Headers
+Content-Type: application/json
+Accept: application/json
+
+# GET http:
+
+
+# 
+```
