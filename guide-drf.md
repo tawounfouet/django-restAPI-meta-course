@@ -119,5 +119,20 @@ Accept: application/json
 # GET http:
 
 
-# 
+# Filtering and Searching in DRF
+# https://www.django-rest-framework.org/api-guide/filtering/
+
+http://127.0.0.1:8009/api/menu-items/?category=food
+http://127.0.0.1:8009/api/menu-items/?category=dish
+
+http://127.0.0.1:8009/api/menu-items/?to_price=10
+
+http://127.0.0.1:8009/api/menu-items/?to_price=10&category=food
+
+
+# django_filters 
+pipenv install django_filters
+
+
+
 ```
