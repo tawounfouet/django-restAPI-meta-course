@@ -136,4 +136,7 @@ pipenv install django_filters
 
 # Djoser - REST implementation of Django authentication system
 pipenv install djoser
+
+# JWT - JSON Web Token Authentication support for Django REST Framework
+pipenv install djangorestframework_simplejwt
 ```

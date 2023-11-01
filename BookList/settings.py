@@ -37,11 +37,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",  # Django REST framework
     "rest_framework.authtoken",  # Django REST framework Token Authentication
+    "rest_framework_simplejwt",  # Django REST framework JSON Web Token Authentication support
+    "rest_framework_simplejwt.token_blacklist",  # Django REST framework JSON Web Token Authentication support
+    "djoser",  # Djoser - REST implementation of Django authentication system
     "BookListAPI",  # BookListAPI app
     "LittleLemonAPI",  # LittleLemonAPI app
-    "debug_toolbar",  # Django Debug Toolbar
+
 ]
 
 MIDDLEWARE = [
@@ -154,7 +158,8 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         #'rest_framework.authentication.BasicAuthentication',
-        #'rest_framework.authentication.SessionAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",  # Django REST framework JSON Web Token Authentication support
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',  # Django REST framework Token Authentication
     ),
     'DEFAULT_THROTTLE_RATES': {
@@ -164,4 +169,39 @@ REST_FRAMEWORK = {
         'user':'5/minute',
         'ten':'10/minute',
     }
+}
+
+
+# Djoser - REST implementation of Django authentication system
+DJOSER = {
+    "LOGIN_ID_FIELD": "username",
+    # "LOGIN_FIELD": "username",
+    # "USER_CREATE_PASSWORD_RETYPE": True,
+    # "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
+    # "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    # "SEND_CONFIRMATION_EMAIL": True,
+    # "SET_USERNAME_RETYPE": True,
+    # "SET_PASSWORD_RETYPE": True,
+    # "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    # "USERNAME_RESET_CONFIRM_URL": "email/reset/confirm/{uid}/{token}",
+    # "ACTIVATION_URL": "activate/{uid}/{token}",
+    # "SEND_ACTIVATION_EMAIL": True,
+    # "SERIALIZERS": {},
+}
+
+# Django REST framework JSON Web Token Authentication support
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 'ROTATE_REFRESH_TOKENS': True,
+    # 'BLACKLIST_AFTER_ROTATION': True,
+    # 'UPDATE_LAST_LOGIN': False,
+    # 'ALGORITHM': 'HS256',
+    # 'SIGNING_KEY': SECRET_KEY,
+    # 'VERIFYING_KEY': None,
+    # 'AUDIENCE': None,
+    # 'ISSUER': None,
+    # 'AUTH_HEADER_TYPES': ('Bearer',),
 }
