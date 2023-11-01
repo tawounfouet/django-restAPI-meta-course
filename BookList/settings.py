@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     "debug_toolbar",  # Django Debug Toolbar
     "rest_framework",  # Django REST framework
     "rest_framework.authtoken",  # Django REST framework Token Authentication
-    "rest_framework_simplejwt",  # Django REST framework JSON Web Token Authentication support
-    "rest_framework_simplejwt.token_blacklist",  # Django REST framework JSON Web Token Authentication support
+    # "rest_framework_simplejwt",  # Django REST framework JSON Web Token Authentication support
+    # "rest_framework_simplejwt.token_blacklist",  # Django REST framework JSON Web Token Authentication support
     "djoser",  # Djoser - REST implementation of Django authentication system
     "BookListAPI",  # BookListAPI app
     "LittleLemonAPI",  # LittleLemonAPI app

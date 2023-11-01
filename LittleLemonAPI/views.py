@@ -20,11 +20,11 @@ from .serializers import MenuItemSerializer, CategorySerializer
 #     #return Response(items.values())
 
 
-#Managing Get and Post Requests on the same endpoint
+# Managing Get and Post Requests on the same endpoint
 @api_view(["GET", "POST"])
 def menu_items(request):
     # Get Request
-    if (request.method == "GET"):
+    if request.method == "GET":
         items = MenuItem.objects.select_related("category").all()
         # Seaching, Filtering and Ordering
         category_name = request.query_params.get("category")
@@ -41,7 +41,7 @@ def menu_items(request):
         if search:
             items = items.filter(title__icontains=search)
         if ordering:
-            #items = items.order_by(ordering)
+            # items = items.order_by(ordering)
             # ordering with multiple fields
             ordering_fields = ordering.split(",")
             items = items.order_by(*ordering_fields)
@@ -69,27 +69,27 @@ def single_item(request, id):
     return Response(serialized_item.data)
 
 
-
 class CategoriesView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+
 class MenuItemsView(generics.ListCreateAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    ordering_fields = ['price', 'inventory']
-    filterset_fields = ['price', 'inventory']
-    search_fields = ['title']
-
-
+    ordering_fields = ["price", "inventory"]
+    filterset_fields = ["price", "inventory"]
+    search_fields = ["title"]
 
 
 from rest_framework import viewsets
+
+
 class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
-    ordering_fields=['price','inventory']
-    search_fields=['title', 'category__title']
+    ordering_fields = ["price", "inventory"]
+    search_fields = ["title", "category__title"]
 
 
 class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
@@ -104,34 +104,78 @@ from rest_framework.decorators import permission_classes, throttle_classes
 @api_view()
 @permission_classes([IsAuthenticated])
 def secret(request):
-    return Response({"message":"This is a secret message"}, status=status.HTTP_200_OK)
+    return Response({"message": "This is a secret message"}, status=status.HTTP_200_OK)
+
 
 @api_view()
 @permission_classes([IsAuthenticated])
 def me(request):
     return Response(request.user.email, status=status.HTTP_200_OK)
 
+
 @api_view()
 @permission_classes([IsAuthenticated])
 def manager_view(request):
     if request.user.groups.filter(name="Manager").exists():
-        return Response({"message":"Welcome to the manager view"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Welcome to the manager view"}, status=status.HTTP_200_OK
+        )
     else:
-        return Response({"message":"You are not allowed to access this view"}, status=status.HTTP_403_FORBIDDEN)
-
+        return Response(
+            {"message": "You are not allowed to access this view"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
 
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from .throttles import TenCallsPerMinute
 
+
 @api_view()
 @throttle_classes([AnonRateThrottle])
 def throttle_check(request):
-    return Response({"message":"Sucessfull"}, status=status.HTTP_200_OK)
+    return Response({"message": "Sucessfull"}, status=status.HTTP_200_OK)
+
 
 @api_view()
 @permission_classes([IsAuthenticated])
-#@throttle_classes([UserRateThrottle])
+# @throttle_classes([UserRateThrottle])
 @throttle_classes([TenCallsPerMinute])
 def throttle_check_auth(request):
-    return Response({"message":"Message for the logged in users only"}, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "Message for the logged in users only"}, status=status.HTTP_200_OK
+    )
+
+
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth.models import Group, User
+from django.shortcuts import get_object_or_404
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def managers(request):
+    username = request.data["username"]
+    if username:
+        user = get_object_or_404(User, username=username)
+        managers = Group.objects.get(name="Manager")
+        if request.method == "POST":
+            managers.user_set.add(user)
+        elif request.method == "DELETE":
+            managers.user_set.remove(user)
+        return Response({"message": "Ok"}, status=status.HTTP_200_OK)
+    
+    return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+from .models import Rating
+from .serializers import RatingSerializer
+
+class RatingsView(generics.ListCreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def get_permissions(self):
+        if(self.request.method=='GET'):
+            return []
+
+        return [IsAuthenticated()]
