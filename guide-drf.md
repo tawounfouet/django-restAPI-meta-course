@@ -134,5 +134,6 @@ http://127.0.0.1:8009/api/menu-items/?to_price=10&category=food
 pipenv install django_filters
 
 
-
+# Djoser - REST implementation of Django authentication system
+pipenv install djoser
 ```

@@ -84,7 +84,6 @@ class MenuItemsView(generics.ListCreateAPIView):
 
 
 
-
 from rest_framework import viewsets
 class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
@@ -96,3 +95,43 @@ class MenuItemsViewSet(viewsets.ModelViewSet):
 class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes, throttle_classes
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def secret(request):
+    return Response({"message":"This is a secret message"}, status=status.HTTP_200_OK)
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def me(request):
+    return Response(request.user.email, status=status.HTTP_200_OK)
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def manager_view(request):
+    if request.user.groups.filter(name="Manager").exists():
+        return Response({"message":"Welcome to the manager view"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"message":"You are not allowed to access this view"}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from .throttles import TenCallsPerMinute
+
+@api_view()
+@throttle_classes([AnonRateThrottle])
+def throttle_check(request):
+    return Response({"message":"Sucessfull"}, status=status.HTTP_200_OK)
+
+@api_view()
+@permission_classes([IsAuthenticated])
+#@throttle_classes([UserRateThrottle])
+@throttle_classes([TenCallsPerMinute])
+def throttle_check_auth(request):
+    return Response({"message":"Message for the logged in users only"}, status=status.HTTP_200_OK)
